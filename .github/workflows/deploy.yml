@@ -18,7 +18,7 @@ jobs:
       - name: Log in to Amazon ECR (Usa automaticamente las credenciales desde los secrets de gh)
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          region: us-east-1
+          registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
 
       - name: Build CloudTask Docker image
         run: |
