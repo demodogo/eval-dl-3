@@ -1,29 +1,14 @@
 services:
-  web:
-    image: nginx
+  cloudtask-node-app:
+    build:
+      context: .
     ports:
-      - "8080:80"
-    networks:
-      - app-network
-  db:
-    image: mysql:8.0
-    ports:
-      - "3300:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    networks:
-      - app-network
+      - "3000:3000"
     volumes:
-      - db-data:/var/lib/mysql
-  admin:
-    image: phpmyadmin/phpmyadmin
-    environment:
-      PMA_HOST: db
-    ports:
-      - "8081:80"
+      - .:/app
     networks:
-      - app-network
+      - cloudtask-network
+
 networks:
-  app-network:
-volumes:
-  db-data:
+  cloudtask-network:
+    driver: bridge

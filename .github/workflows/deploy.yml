@@ -1,0 +1,37 @@
+name: CI Pipeline (Deploy to ECS)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Amazon ECR (Usa automaticamente las credenciales desde los secrets de gh)
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          region: us-east-1
+
+      - name: Build CloudTask Docker image
+        run: |
+          docker build -t cloudtask-node-app .
+
+      - name: Tag docker image
+        run: |
+          docker tag cloudtask-node-app:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/cloudtask-node-app:latest
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/cloudtask-node-app:latest
+
+      - name: (Re) Deploy to ECS
+        run: |
+          aws ecs update-service --cluster cloudtask-cluster --service cloudtask-node-service --force-new-deployment --region us-east-1
