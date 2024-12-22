@@ -1,0 +1,14 @@
+services:
+  cloudtask-node-app:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    networks:
+      - cloudtask-network
+
+networks:
+  cloudtask-network:
+    driver: bridge
